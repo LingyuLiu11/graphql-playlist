@@ -1,8 +1,20 @@
 const graphql = require('graphql');
 
+const _ = require('lodash');
 //describe object type 
 //first grasp variable from graphql package
 const {GraphQLObjectType, GraphQLString, GraphQLSchema} = graphql;
+
+
+// dummy data:
+var books = [
+    { name: 'Name of the Wind', genre: 'Fantasy', id: '1' },
+    { name: 'The Final Empire', genre: 'Fantasy', id: '2' },
+    { name: 'The Long Earth', genre: 'Sci-Fi', id: '3' },
+];
+
+
+
 
 //define new type
 //wrap fields in function
@@ -23,6 +35,8 @@ const RootQuery = new GraphQLObjectType({
             args: { id: { type: GraphQLString } }, //get book by id
             resolve(parent, args) {
                 //code to get data from db
+                //using dummy data:
+                return _.find(books, {id: args.id});
                 
             }
 
