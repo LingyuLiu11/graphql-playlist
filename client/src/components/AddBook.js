@@ -15,8 +15,7 @@ class AddBook extends Component {
     displayAuthors(){
         console.log(this.props);
         var data = this.props.getAuthorsQuery;
-        
-            return data.authors.map(author => {
+            return data.authors?.map(author => {
                 return( <option key={ author.id } value={author.id}>{ author.name }</option> );
             });
         
