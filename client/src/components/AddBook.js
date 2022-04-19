@@ -1,46 +1,57 @@
-import React, { Component } from "react";
-import { gql } from "apollo-boost";
-import { graphql } from "react-apollo";
-
-import { getAuthorsQuery } from "../queries/queries";
+import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
+import { getAuthorsQuery, addBookMutation } from '../queries/queries';
+import { flowRight } from 'lodash';
 
 class AddBook extends Component {
-  displayAuthors() {
-    var data = this.props.data;
-    // if (data.loading) {
-    //   return <option>Loading authors</option>;
-    // } else {
-      return data.authors.map((author) => {
-        return (
-          <option key={author.id} value={author.id}>
-            {author.name}
-          </option>
-        );
-        });
+    constructor(props){
+        super(props);
+        this.state = {
+            name: '',
+            genre: '',
+            authorId: ''
+        };
     }
-  
-  render() {
-    return (
-      <form id="add-book">
-        <div className="field">
-          <label>Book name:</label>
-          <input type="text" />
-        </div>
-        <div className="field">
-          <label>Genre:</label>
-          <input type="text" />
-        </div>
-        <div className="field">
-          <label>Author:</label>
-          <select>
-            <option>Select author</option>
-            {this.displayAuthors()}
-          </select>
-        </div>
-        <button>+</button>
-      </form>
-    );
-  }
+    displayAuthors(){
+        console.log(this.props);
+        var data = this.props.getAuthorsQuery;
+        
+            return data.authors.map(author => {
+                return( <option key={ author.id } value={author.id}>{ author.name }</option> );
+            });
+        
+    }
+    submitForm(e){
+        e.preventDefault()
+        console.log(this.state);
+        // use the addBookMutation
+        this.props.addBookMutation(); // adds a book, but with no values
+    }
+    render(){
+        return(
+            <form id="add-book" onSubmit={ this.submitForm.bind(this) } >
+                <div className="field">
+                    <label>Book name:</label>
+                    <input type="text" onChange={ (e) => this.setState({ name: e.target.value }) } />
+                </div>
+                <div className="field">
+                    <label>Genre:</label>
+                    <input type="text" onChange={ (e) => this.setState({ genre: e.target.value }) } />
+                </div>
+                <div className="field">
+                    <label>Author:</label>
+                    <select onChange={ (e) => this.setState({ authorId: e.target.value }) } >
+                        <option>Select author</option>
+                        { this.displayAuthors() }
+                    </select>
+                </div>
+                <button>+</button>
+            </form>
+        );
+    }
 }
 
-export default graphql(getAuthorsQuery)(AddBook);
+export default flowRight(
+    graphql(getAuthorsQuery, { name: "getAuthorsQuery" }),
+    graphql(addBookMutation, { name: "addBookMutation" })
+)(AddBook);
