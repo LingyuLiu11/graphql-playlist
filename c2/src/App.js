@@ -39,6 +39,18 @@ const getBooksQuery = gql`
   }
 `;
 
+const BookQuery = gql`
+  {
+    books {
+      name
+      id
+      author {
+        name
+      }
+    }
+  }
+`;
+
 
 function Booklist() {
   const { loading, error, data } = useQuery(getBooksQuery);
@@ -77,7 +89,7 @@ const addAuthorMutation = gql`
 
 function MyComponent() {
   // Pass mutation to useMutation
-  const [addAuthor, { data, loading, error }] = useMutation(addAuthorMutation);
+  const [addAuthor, { data, loading, error }] = useMutation(addAuthorMutation, { client: client.current });
   const[name, setName] = useState('');
   const[age, setAge] = useState('');
   if (loading) return 'Submitting...';
@@ -96,6 +108,7 @@ function MyComponent() {
     e.preventDefault();
     setAge(e.target.value);
     console.log("age " + age);
+    
   }
 
   return (
@@ -105,6 +118,7 @@ function MyComponent() {
           e.preventDefault();
           addAuthor({ variables: { name: name, age: age} });
           // input.value = '';
+          
         }}
       >
         <input

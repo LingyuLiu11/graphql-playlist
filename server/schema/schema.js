@@ -25,6 +25,7 @@ var books = [
   { name: "The Long Earth", genre: "Sci-Fi", id: "3", authorId: "3" },
   { name: "The Colour of Magic", genre: "Fantasy", id: "5", authorId: "3" },
   { name: "The Light Fantastic", genre: "Fantasy", id: "6", authorId: "3" },
+  { name: "The Light Fantastic", genre: "mm", id: "6", authorId: "3" },
 ];
 
 var authors = [
@@ -70,6 +71,15 @@ const AuthorType = new GraphQLObjectType({
   }),
 });
 
+const getGenre = (genre) => {
+    // console.log(Book.find({genre: genre}));
+    // return new Promise((resolve) => {
+    //     setTimeout(() => {
+    //         resolve(Book.find({genre: genre}));
+    //     }, 2000);
+    // });
+    return (Book.find({genre: genre}));
+}
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
@@ -79,12 +89,29 @@ const RootQuery = new GraphQLObjectType({
       resolve(parent, args) {
         //code to get data from db
         //using dummy data:
-        console.log(args + " args"); // return [object Object]
-        console.log(typeof args.id); // type = string
+        //console.log(args + " args"); // return [object Object]
+        //console.log(typeof args.id); // type = string
         //return _.find(books, { id: args.id });
         return Book.findById(args.id);
       },
     },
+    book1: {
+        type: BookType,
+        args: { genre: { type: GraphQLString } }, //get book by name
+        resolve(parent, args) {
+          //code to get data from db
+          //using dummy data:
+          //return _.find(books, { id: args.id });
+          
+          
+        //   console.log("Book: " + Book);
+        // console.log(args.name);
+        //   return Book.find({"name": args.name});
+        // return Book.find({genre: args.genre});
+            // return _.find(books, {genre: args.genre});
+            return getGenre(args.genre);
+        },
+      },
     author: {
       type: AuthorType,
       args: { id: { type: GraphQLID } },
